@@ -3,7 +3,7 @@
 #define H_SYNC_PIN 5
 #define V_SYNC_PIN 4
 
-#define PIXEL_PIN 5
+#define PIXEL_PIN 1
 
 #define LINE_CNT_L R24
 #define LINE_CNT_H R25
@@ -221,7 +221,7 @@ LINE_CNT_NOT_ZERO:
                                                  ; Total 10 clocks. (0.625 microseconds on 16MHz; ideal: 0.63555 microseconds.)
                                                  ; -- End Front Porch ---
 
-#define ONE (1 << 5)
+#define ONE (1 << 1)
 #define ZERO 0b00
 
 TEST_PATTERN:
