@@ -3,23 +3,22 @@
 #define H_SYNC_PIN 5
 #define V_SYNC_PIN 4
 
-#define PIXEL_PIN 3
+#define PIXEL_PIN 5
 
 #define LINE_CNT_L R24
 #define LINE_CNT_H R25
 #define WAIT_CNT R20
 
-#define ZERO_REG R16
+#define ZERO_REG R22
+
+#define VRAM_ADDR 0x0100
 
 .section .text
 .ORG 0x0000
     RJMP RESET
 
 RESET:
-    LDI  R16, lo8(RAMEND)                        ; Initialise stack pointers
-    OUT  _SFR_IO_ADDR(SPL), R16
-    LDI  R16, hi8(RAMEND)
-    OUT  _SFR_IO_ADDR(SPH), R16
+    CLI
 
     LDI  ZERO_REG, 0
 
@@ -27,12 +26,23 @@ RESET:
     SBI  _SFR_IO_ADDR(PORTC), H_SYNC_PIN
     SBI  _SFR_IO_ADDR(DDRC), V_SYNC_PIN          ; Set V_SYNC_PIN to output mode and HIGH.
     SBI  _SFR_IO_ADDR(PORTC), V_SYNC_PIN
-    SBI  _SFR_IO_ADDR(DDRC), PIXEL_PIN           ; Set PIXEL_PIN to output mode.
+    SBI  _SFR_IO_ADDR(DDRB), PIXEL_PIN           ; Set PIXEL_PIN to output mode.
 
     LDI  LINE_CNT_H, hi8(525)
     LDI  LINE_CNT_L, lo8(525)
 
-    CLI
+TEMP_COPY_TEST_PATTERN_TO_VRAM:
+    LDI  ZH, hi8(TEST_PATTERN)
+    LDI  ZL, lo8(TEST_PATTERN)
+    LDI  YH, hi8(VRAM_ADDR)
+    LDI  YL, lo8(VRAM_ADDR)
+    LDI  R16, 101
+
+TEMP_COPY_TEST_PATTERN_TO_VRAM_LOOP:
+    LPM  R17, Z+
+    ST   Y+, R17
+    DEC  R16
+    BRNE TEMP_COPY_TEST_PATTERN_TO_VRAM_LOOP
 
 SYNC_PULSE:                                      ; --- Begin Sync Pulse ---
     CBI  _SFR_IO_ADDR(PORTC), H_SYNC_PIN         ; Begin H_SYNC pulse. (2 clocks)
@@ -72,21 +82,122 @@ BACK_PORCH:                                      ; --- Begin Back Porch ---
 BACK_PORCH_WAIT:
     DEC  WAIT_CNT                                ; 1 clock
     BRNE BACK_PORCH_WAIT                         ; if WAIT_CNT /= 0 then 2 clocks else 1 clock.
-    NOP                                          ; 1 clock
-    NOP                                          ; 1 clock
+    LDI  R30, lo8(VRAM_ADDR)                     ; 1 clock
+    LDI  R31, hi8(VRAM_ADDR)                     ; 1 clock
                                                  ; Total 31 clocks. (1.9375 microseconds on 16MHz; ideal: 1.90665 microseconds.)
                                                  ; -- End Back Porch ---
 
-ACTIVE_VIDEO:                                    ; -- Begin Active Video ---
-    LDI  WAIT_CNT, 134                           ; 1 clock
-    SBI _SFR_IO_ADDR(PORTC), PIXEL_PIN
-ACTIVE_VIDEO_WAIT:
-    DEC  WAIT_CNT                                ; 1 clock
-    BRNE ACTIVE_VIDEO_WAIT                       ; if WAIT_CNT /= 0 then 2 clocks else 1 clock.
-    ;NOP                                          ; 1 clock
-    ;NOP                                          ; 1 clock
+.macro RENDER_DOT
+    LD  R17, Z+
+    OUT _SFR_IO_ADDR(PORTB), R17
     NOP
-    CBI _SFR_IO_ADDR(PORTC), PIXEL_PIN
+.endm
+
+ACTIVE_VIDEO:                                    ; -- Begin Active Video ---
+    OUT _SFR_IO_ADDR(DDRB), ZERO_REG
+    NOP
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    RENDER_DOT
+    OUT _SFR_IO_ADDR(DDRB), ZERO_REG
                                                  ; Total 407 clocks. (25.4375 microseconds on 16MHz; ideal: 25.42204 microseconds.)
                                                  ; -- End Active Video ---
 
@@ -109,3 +220,19 @@ LINE_CNT_NOT_ZERO:
     RJMP SYNC_PULSE                              ; 2 clocks
                                                  ; Total 10 clocks. (0.625 microseconds on 16MHz; ideal: 0.63555 microseconds.)
                                                  ; -- End Front Porch ---
+
+#define ONE (1 << 5)
+#define ZERO 0b00
+
+TEST_PATTERN:
+    .byte ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO ; 10
+    .byte ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO ; 20
+    .byte ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO ; 30
+    .byte ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO ; 40
+    .byte ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO ; 50
+    .byte ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO ; 60
+    .byte ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO ; 70
+    .byte ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO ; 80
+    .byte ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO ; 90
+    .byte ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO, ONE, ZERO ; 100
+    .byte ONE                                                   ; 101
