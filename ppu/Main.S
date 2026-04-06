@@ -22,11 +22,11 @@ RESET:
 
     LDI  ZERO_REG, 0
 
-    SBI  _SFR_IO_ADDR(DDRC), H_SYNC_PIN          ; Set H_SYNC_PIN to output mode and HIGH.
+    SBI  _SFR_IO_ADDR(DDRC), H_SYNC_PIN
     SBI  _SFR_IO_ADDR(PORTC), H_SYNC_PIN
-    SBI  _SFR_IO_ADDR(DDRC), V_SYNC_PIN          ; Set V_SYNC_PIN to output mode and HIGH.
+    SBI  _SFR_IO_ADDR(DDRC), V_SYNC_PIN
     SBI  _SFR_IO_ADDR(PORTC), V_SYNC_PIN
-    SBI  _SFR_IO_ADDR(DDRB), PIXEL_PIN           ; Set PIXEL_PIN to output mode.
+    SBI  _SFR_IO_ADDR(DDRB), PIXEL_PIN
 
     LDI  LINE_CNT_H, hi8(525)
     LDI  LINE_CNT_L, lo8(525)
@@ -100,8 +100,8 @@ BACK_PORCH_WAIT:
                                                  ; -- End Back Porch ---
 
 .macro RENDER_DOT
-    LD  R17, Z+
-    OUT _SFR_IO_ADDR(PORTB), R17
+    LD  R17, Z+                                  ; 2 clocks
+    OUT _SFR_IO_ADDR(PORTB), R17                 ; 1 clock
 .endm
 
 .macro RENDER_DOT_5
