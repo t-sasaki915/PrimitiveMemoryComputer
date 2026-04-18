@@ -16,7 +16,12 @@
 
 RESET:
     CLI
-    
+
+    LDI  R16, 0xD8                               ; 0xD8 = CCP_IOREG_gc
+    LDI  R17, 0x24                               ; 0x24 = CLKCTRL_FRQSEL_24M_gc
+    OUT  CPU_CCP, R16
+    STS  CLKCTRL_OSCHFCTRLA, R17
+
     LDI  R16, (1 << H_SYNC_PIN) | (1 << V_SYNC_PIN)
     STS  PORTD_DIR, R16
     STS  PORTD_OUT, R16
@@ -51,7 +56,7 @@ SET_VSYNC_LOW:
     NOP                                          ; 1 clock
 
 VSYNC_IS_SET:                                    ; 12 clocks so far.
-    LDI  WAIT_CNT, 14                            ; 1 clock
+    LDI  WAIT_CNT, 24                            ; 1 clock
 
 SYNC_PULSE_WAIT:
     DEC  WAIT_CNT                                ; 1 clock
@@ -67,30 +72,28 @@ WAIT_THREE_CLOCKS_AND_BACK_PORCH:
     NOP                                          ; 1 clock
     NOP                                          ; 1 clock
     NOP                                          ; 1 clock
-                                                 ; Total 61 clocks. (3.8125 microseconds on 16MHz; ideal: 3.8133 microseconds.)
+                                                 ; Total 91 clocks.
                                                  ; --- End Sync Pulse ---
 
 BACK_PORCH:                                      ; --- Begin Back Porch ---
     STS  PORTD_OUTSET, H_SYNC_PIN_BITMASK        ; 2 clocks
-    LDI  WAIT_CNT, 9                             ; 1 clock
+    LDI  WAIT_CNT, 14                            ; 1 clock
 
 BACK_PORCH_WAIT:
     DEC  WAIT_CNT                                ; 1 clock
     BRNE BACK_PORCH_WAIT                         ; 2 clocks (/= 0) / 1 clock (== 0)
     NOP                                          ; 1 clock
-    NOP                                          ; 1 clock
-                                                 ; Total 31 clocks. (1.9375 microseconds on 16MHz; ideal: 1.90665 microseconds.)
+                                                 ; Total 45 clocks.
                                                  ; -- End Back Porch ---
 
 ACTIVE_VIDEO:                                    ; -- Begin Active Video ---
-    LDI  WAIT_CNT, 135                           ; 1 clock
+    LDI  WAIT_CNT, 203                           ; 1 clock
 
 ACTIVE_VIDEO_WAIT:
     DEC  WAIT_CNT                                ; 1 clock
     BRNE ACTIVE_VIDEO_WAIT                       ; 2 clocks (/= 0) / 1 clock (== 0)
     NOP                                          ; 1 clock
-    NOP                                          ; 1 clock
-                                                 ; Total 407 clocks. (25.4375 microseconds on 16MHz; ideal: 25.42204 microseconds.)
+                                                 ; Total 610 clocks.
                                                  ; -- End Active Video ---
 
 FRONT_PORCH:                                     ; --- Begin Front Porch ---
@@ -101,8 +104,13 @@ FRONT_PORCH:                                     ; --- Begin Front Porch ---
     NOP                                          ; 1 clock
     NOP                                          ; 1 clock
     NOP                                          ; 1 clock
+    NOP                                          ; 1 clock
+    NOP                                          ; 1 clock
+    NOP                                          ; 1 clock
+    NOP                                          ; 1 clock
+    NOP                                          ; 1 clock
     RJMP SYNC_PULSE                              ; 2 clocks
-                                                 ; Total 10 clocks. (0.625 microseconds on 16MHz; ideal: 0.63555 microseconds.)
+                                                 ; Total 15 clocks.
                                                  ; -- End Front Porch ---
 
 VBLANK:
@@ -118,7 +126,7 @@ RESET_LINE_CNT:
     LDI  LINE_CNT_L, lo8(525)                    ; 1 clock
 
 VBLANK_CONTINUE:                                 ; 8 clocks so far
-    LDI  WAIT_CNT, 145                           ; 1 clock
+    LDI  WAIT_CNT, 219                           ; 1 clock
 
 VBLANK_WAIT:
     DEC  WAIT_CNT                                ; 1 clock
@@ -126,4 +134,4 @@ VBLANK_WAIT:
     NOP                                          ; 1 clock
     NOP                                          ; 1 clock
     JMP  SYNC_PULSE                              ; 3 clocks
-                                                 ; Total 448 clocks.
+                                                 ; Total 670 clocks.
