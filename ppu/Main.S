@@ -194,22 +194,53 @@ BACK_PORCH_CONTINUE:                             ; 12 clocks so far
                                                  ; Total 46 clocks.
                                                  ; -- End Back Porch ---
 
+.MACRO TEMP_MACRO                                ; 18 clocks
+    LOAD_FONT_BYTE                               ; 11 clocks
+    NOP                                          ; 1 clock
+    NOP                                          ; 1 clock
+    NOP                                          ; 1 clock
+    NOP                                          ; 1 clock
+    NOP                                          ; 1 clock
+    STS  SPI0_DATA, FONT_BYTE                    ; 2 clocks
+.ENDM
+
 ACTIVE_VIDEO:                                    ; -- Begin Active Video ---
     STS  SPI0_DATA, FONT_BYTE                    ; 2 clocks
-    LOAD_FONT_BYTE                               ; 11 clocks
-    NOP                                          ; 1 clock
-    NOP                                          ; 1 clock
-    NOP                                          ; 1 clock
-    NOP                                          ; 1 clock
-    STS  SPI0_DATA, FONT_BYTE                    ; 2 clocks
-    LOAD_FONT_BYTE                               ; 11 clocks
-    NOP                                          ; 1 clock
-    NOP                                          ; 1 clock
-    NOP                                          ; 1 clock
-    NOP                                          ; 1 clock
-    STS  SPI0_DATA, FONT_BYTE                    ; 2 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
+    TEMP_MACRO                                   ; 18 clocks
     
-    SLP3 191                                     ; 606 clocks
+    SLP3 10                                      ; 30 clocks
+    NOP                                          ; 1 clock
     NOP                                          ; 1 clock
                                                  ; Total 610 clocks.
                                                  ; -- End Active Video ---
